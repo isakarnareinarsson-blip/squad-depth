@@ -1,0 +1,537 @@
+/* Squad Depth: night match under floodlights.
+   Deep turf greens, chalk-white lines and type, gold reserved for rarity and points. */
+
+:root {
+  --turf-deep: #0b1b15;
+  --turf: #10261d;
+  --turf-light: #173528;
+  --chalk: #eef1e8;
+  --chalk-soft: #a7b8ad;
+  --line: rgba(238, 241, 232, 0.18);
+  --gold: #f6c945;
+  --yellow-card: #f6c945;
+  --red-card: #e5533d;
+
+  --condensed: 68%;
+  --radius: 12px;
+  --ease-out: cubic-bezier(0.22, 0.8, 0.26, 1);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--turf-deep);
+  color: var(--chalk);
+  font-family: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+p,
+dl,
+dd,
+ol,
+figure {
+  margin: 0;
+}
+
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ---------- Layout ---------- */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 41rem);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin-inline: auto;
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+
+main {
+  flex: 1;
+  padding-block: clamp(2rem, 9vh, 5rem) 2.5rem;
+}
+
+.view > * + * {
+  margin-top: 1.25rem;
+}
+
+/* ---------- Top bar ---------- */
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  font-stretch: var(--condensed);
+  font-weight: 800;
+  font-size: 1.375rem;
+  letter-spacing: 0.01em;
+}
+
+.scoreboard {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  color: var(--chalk-soft);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreboard__score b {
+  color: var(--gold);
+  font-stretch: var(--condensed);
+  font-weight: 800;
+  font-size: 1.375rem;
+}
+
+/* ---------- Type ---------- */
+
+.headline {
+  font-stretch: var(--condensed);
+  font-weight: 800;
+  font-size: clamp(2.25rem, 8.5vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+
+.headline--answer {
+  font-size: clamp(2.75rem, 11vw, 4.5rem);
+  line-height: 0.98;
+}
+
+.headline:focus {
+  outline: none;
+}
+
+.lede {
+  max-width: 34rem;
+  color: var(--chalk-soft);
+}
+
+.context {
+  color: var(--chalk-soft);
+  font-size: 0.9375rem;
+}
+
+.status {
+  color: var(--chalk-soft);
+}
+
+/* ---------- Guess form ---------- */
+
+.guess {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 34rem) {
+  .guess {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.guess__input {
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0 1rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--turf);
+  color: var(--chalk);
+  font: inherit;
+  font-size: 1.1875rem;
+  font-weight: 500;
+}
+
+.guess__input::placeholder {
+  color: var(--chalk-soft);
+  opacity: 0.75;
+}
+
+.guess__input:focus {
+  outline: none;
+  border-color: var(--chalk);
+  background: var(--turf-light);
+}
+
+.guess__input[aria-invalid="true"] {
+  border-color: var(--yellow-card);
+}
+
+.btn {
+  min-height: 3.5rem;
+  padding: 0 1.5rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--chalk);
+  color: var(--turf-deep);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.btn:hover {
+  background: #fff;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.link-btn {
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  color: var(--chalk-soft);
+  font: inherit;
+  font-size: 0.9375rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  color: var(--chalk);
+}
+
+/* ---------- Wrong-guess feedback (the referee's cards) ---------- */
+
+.feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-height: 1.5em;
+  margin-top: 1rem;
+  color: var(--chalk);
+}
+
+.feedback:empty {
+  margin-top: 0;
+  min-height: 0;
+}
+
+.card {
+  flex: none;
+  width: 1.05rem;
+  height: 1.45rem;
+  margin-top: 0.05rem;
+  border-radius: 3px;
+  background: var(--yellow-card);
+  transform: rotate(-8deg);
+  animation: card-up 260ms var(--ease-out);
+}
+
+.card--red {
+  background: var(--red-card);
+}
+
+.card--large {
+  display: block;
+  width: 2.1rem;
+  height: 2.9rem;
+  border-radius: 5px;
+}
+
+@keyframes card-up {
+  from {
+    transform: translateY(0.75rem) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+/* ---------- Result ---------- */
+
+.jackpot {
+  display: inline-block;
+  padding: 0.2rem 0.7rem 0.25rem;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--turf-deep);
+  font-stretch: var(--condensed);
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+
+.jackpot + .headline {
+  margin-top: 0.75rem;
+}
+
+.context + .headline,
+.context + .jackpot {
+  margin-top: 0.5rem;
+}
+
+.context + .card--large {
+  margin-top: 1.25rem;
+}
+
+.card--large + .headline,
+.card--large + .jackpot + .headline {
+  margin-top: 1rem;
+}
+
+.headline + .lede {
+  margin-top: 0.75rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat dd {
+  font-stretch: var(--condensed);
+  font-weight: 800;
+  font-size: clamp(2.75rem, 12vw, 4rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat dt {
+  margin-top: 0.35rem;
+  color: var(--chalk-soft);
+  font-size: 0.9375rem;
+}
+
+.stat--points dd {
+  color: var(--gold);
+}
+
+/* The pitch: the ball's run from the left goal line is the score. */
+
+.pitch {
+  margin-top: 1.5rem;
+}
+
+.pitch__field {
+  position: relative;
+  aspect-ratio: 640 / 140;
+  min-height: 5.5rem;
+  width: 100%;
+}
+
+.pitch__field svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.pitch__stripes rect {
+  fill: var(--turf-light);
+  opacity: 0.55;
+}
+
+.pitch__lines > * {
+  fill: none;
+  stroke: var(--chalk);
+  stroke-opacity: 0.55;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.pitch__goal > * {
+  fill: none;
+  stroke: var(--chalk);
+  stroke-opacity: 0.4;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* --run is 0 to 1: how far along the pitch the ball ends up. The pitch
+   itself spans 3.125% to 96.875% of the drawing; past that is the net. */
+.pitch__ball,
+.pitch__trail {
+  position: absolute;
+  top: 50%;
+  --x: calc(3.125% + var(--run, 0) * 93.75%);
+}
+
+.pitch__ball {
+  left: var(--x);
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--chalk);
+  box-shadow: 0 0 0 3px var(--turf-deep);
+  transform: translate(-50%, -50%);
+  transition: left 1100ms var(--ease-out);
+}
+
+.pitch__trail {
+  left: 3.125%;
+  width: calc(var(--run, 0) * 93.75%);
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--gold) 0 6px, transparent 6px 11px);
+  transform: translateY(-50%);
+  transition: width 1100ms var(--ease-out);
+}
+
+.pitch--goal .pitch__ball {
+  background: var(--gold);
+}
+
+.pitch--goal .pitch__goal > * {
+  stroke: var(--gold);
+  stroke-opacity: 1;
+  transition: stroke 300ms ease 900ms, stroke-opacity 300ms ease 900ms;
+}
+
+.pitch__ends {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  color: var(--chalk-soft);
+  font-size: 0.875rem;
+}
+
+#view-result .btn,
+#view-summary .btn {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+@media (min-width: 34rem) {
+  #view-result .btn,
+  #view-summary .btn {
+    width: auto;
+  }
+}
+
+/* ---------- Final score ---------- */
+
+.recap {
+  margin-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.recap li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.15rem 1rem;
+  align-items: baseline;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.recap__answer {
+  font-weight: 700;
+}
+
+.recap__answer--none {
+  color: var(--chalk-soft);
+  font-weight: 500;
+}
+
+.recap__points {
+  grid-row: span 2;
+  align-self: center;
+  color: var(--gold);
+  font-stretch: var(--condensed);
+  font-weight: 800;
+  font-size: 1.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.recap__points--none {
+  color: var(--chalk-soft);
+}
+
+.recap__prompt {
+  color: var(--chalk-soft);
+  font-size: 0.875rem;
+}
+
+/* ---------- Footnote ---------- */
+
+.footnote {
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  color: var(--chalk-soft);
+  font-size: 0.875rem;
+}
+
+.footnote summary {
+  width: fit-content;
+  cursor: pointer;
+}
+
+.footnote p {
+  max-width: 36rem;
+  margin-top: 0.6rem;
+}
+
+/* ---------- Motion preferences ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pitch__ball,
+  .pitch__trail,
+  .pitch--goal .pitch__goal > *,
+  .btn {
+    transition: none;
+  }
+
+  .card {
+    animation: none;
+  }
+}
