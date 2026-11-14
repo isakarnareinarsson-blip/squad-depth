@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark">
+  <meta name="color-scheme" content="dark light">
   <meta name="theme-color" content="#0b1b15">
   <meta name="description" content="Football trivia where the rarest correct answer wins.">
   <title>Squad Depth</title>
@@ -12,12 +12,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script>
+    // Apply the saved theme before the page paints.
+    try { document.documentElement.dataset.theme = localStorage.getItem('sd_theme') || 'dark'; }
+    catch (e) { document.documentElement.dataset.theme = 'dark'; }
+  </script>
 </head>
 <body>
   <div class="shell">
 
     <header class="topbar">
-      <p class="brand">Squad Depth</p>
+      <button type="button" class="brand" id="home-btn" title="Back to the start screen">Squad Depth</button>
       <p class="scoreboard" id="scoreboard" hidden>
         <span id="progress"></span>
         <span class="scoreboard__score"><b id="total-score">0</b> pts</span>
@@ -29,6 +34,39 @@
       <!-- Loading -->
       <section id="view-loading" class="view">
         <p class="status">Loading questions…</p>
+      </section>
+
+      <!-- Start screen -->
+      <section id="view-start" class="view" hidden>
+        <h1 class="headline">Find the answer nobody else gives</h1>
+        <p class="lede">Every question has many right answers. The fewer people who picked yours, the more it scores.</p>
+
+        <div class="modes">
+          <section class="mode">
+            <h2>Daily challenge</h2>
+            <p>Five questions, the same for everyone today. One attempt, then the leaderboard.</p>
+            <form id="daily-form" class="guess" autocomplete="off" novalidate>
+              <label class="visually-hidden" for="username-input">Your name on the leaderboard</label>
+              <input id="username-input" class="guess__input" type="text" maxlength="20"
+                     placeholder="Your name on the leaderboard" autocapitalize="words" spellcheck="false">
+              <button type="submit" class="btn" id="daily-start">Play today's five</button>
+            </form>
+            <p class="feedback" id="start-feedback" role="status" aria-live="polite"></p>
+            <button type="button" class="link-btn" id="leaderboard-link">See today's leaderboard</button>
+          </section>
+
+          <section class="mode">
+            <h2>Free play</h2>
+            <p>One question after another for as long as you like. Today's five are kept out, and nothing goes on the leaderboard.</p>
+            <button type="button" class="btn btn--outline" id="free-start">Start free play</button>
+          </section>
+        </div>
+
+        <fieldset class="theme">
+          <legend>Appearance</legend>
+          <label><input type="radio" name="theme" value="dark"> Dark</label>
+          <label><input type="radio" name="theme" value="light"> Light</label>
+        </fieldset>
       </section>
 
       <!-- Setup or network problem -->
@@ -125,14 +163,17 @@
         <button type="button" class="btn" id="next-btn">Next question</button>
       </section>
 
-      <!-- Final score -->
-      <section id="view-summary" class="view" hidden>
-        <h1 class="headline" id="summary-title" tabindex="-1">Full time</h1>
-        <p class="lede" id="summary-line"></p>
+      <!-- Daily leaderboard -->
+      <section id="view-leaderboard" class="view" hidden>
+        <h1 class="headline" id="board-title" tabindex="-1">Today's leaderboard</h1>
+        <p class="lede" id="board-line"></p>
 
-        <ol class="recap" id="recap"></ol>
+        <ol class="board" id="board"></ol>
 
-        <button type="button" class="btn" id="again-btn">Play again</button>
+        <div class="actions">
+          <button type="button" class="btn" id="board-free">Start free play</button>
+          <button type="button" class="link-btn" id="board-refresh">Refresh</button>
+        </div>
       </section>
 
     </main>
@@ -144,7 +185,8 @@
           before you: the most-picked answer scores 1 point, and the rarer yours is next to it,
           the closer you get to 100. An answer picked by fewer than 1 in 100 players is a
           <span id="jackpot-name"></span> and scores the full 100. Two wrong guesses on a question
-          and you're sent off with nothing.</p>
+          and you're sent off with nothing. The daily challenge is the same five questions for everyone,
+          and each can be answered once.</p>
       </details>
     </footer>
 

@@ -19,6 +19,19 @@
   color-scheme: dark;
 }
 
+/* Light mode: daytime kick-off. Same roles, flipped values. */
+:root[data-theme="light"] {
+  --turf-deep: #f2f4ea;
+  --turf: #ffffff;
+  --turf-light: #e2e8d9;
+  --chalk: #10261d;
+  --chalk-soft: #55675c;
+  --line: rgba(16, 38, 29, 0.2);
+  --gold: #8f5f00;
+
+  color-scheme: light;
+}
+
 *,
 *::before,
 *::after {
@@ -106,6 +119,12 @@ main {
 }
 
 .brand {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
   font-stretch: var(--condensed);
   font-weight: 800;
   font-size: 1.375rem;
@@ -218,7 +237,11 @@ main {
 }
 
 .btn:hover {
-  background: #fff;
+  opacity: 0.88;
+}
+
+.btn--outline:hover {
+  opacity: 1;
 }
 
 .btn:disabled {
@@ -445,61 +468,198 @@ main {
   font-size: 0.875rem;
 }
 
-#view-result .btn,
-#view-summary .btn {
+/* Rarest and most-picked answers for the question just played */
+
+.tables {
+  display: grid;
+  gap: 1.5rem 2rem;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 34rem) {
+  .tables {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.table h2 {
+  margin: 0 0 0.35rem;
+  font-stretch: var(--condensed);
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.table li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.table li:last-child {
+  border-bottom: 0;
+}
+
+.table__pct {
+  flex: none;
+  color: var(--chalk-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.table li.is-yours {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.table li.is-yours .table__pct {
+  color: var(--gold);
+}
+
+#view-result .btn {
   margin-top: 2rem;
   width: 100%;
 }
 
 @media (min-width: 34rem) {
-  #view-result .btn,
-  #view-summary .btn {
+  #view-result .btn {
     width: auto;
   }
 }
 
-/* ---------- Final score ---------- */
+/* ---------- Start screen ---------- */
 
-.recap {
+.modes {
+  display: grid;
+  gap: 1.75rem;
+  margin-top: 2rem;
+}
+
+.mode {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.mode h2 {
+  margin: 0 0 0.35rem;
+  font-stretch: var(--condensed);
+  font-weight: 800;
+  font-size: 1.625rem;
+}
+
+.mode p {
+  max-width: 34rem;
+  color: var(--chalk-soft);
+}
+
+.mode .guess {
+  margin-top: 1rem;
+}
+
+.mode .btn--outline {
+  margin-top: 1rem;
+}
+
+.mode .link-btn {
+  margin-top: 0.75rem;
+}
+
+.btn--outline {
+  border: 1.5px solid var(--chalk);
+  background: transparent;
+  color: var(--chalk);
+}
+
+.btn--outline:hover {
+  background: var(--turf-light);
+}
+
+.theme {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  margin: 2rem 0 0;
+  padding: 1.25rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  color: var(--chalk-soft);
+  font-size: 0.9375rem;
+}
+
+.theme legend {
+  float: left;
+  padding: 0;
+  margin-right: 1.25rem;
+}
+
+.theme label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--chalk);
+  cursor: pointer;
+}
+
+.theme input {
+  accent-color: var(--gold);
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+}
+
+/* ---------- Leaderboard ---------- */
+
+.board {
   margin-top: 2rem;
   border-top: 1px solid var(--line);
 }
 
-.recap li {
+.board li {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.15rem 1rem;
+  grid-template-columns: 2.5rem 1fr auto;
   align-items: baseline;
-  padding: 0.9rem 0;
+  gap: 0.75rem;
+  padding: 0.8rem 0;
   border-bottom: 1px solid var(--line);
 }
 
-.recap__answer {
-  font-weight: 700;
-}
-
-.recap__answer--none {
+.board__rank {
   color: var(--chalk-soft);
-  font-weight: 500;
-}
-
-.recap__points {
-  grid-row: span 2;
-  align-self: center;
-  color: var(--gold);
-  font-stretch: var(--condensed);
-  font-weight: 800;
-  font-size: 1.75rem;
   font-variant-numeric: tabular-nums;
 }
 
-.recap__points--none {
+.board__name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.board__score {
+  font-stretch: var(--condensed);
+  font-weight: 800;
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.board li.is-yours .board__name,
+.board li.is-yours .board__score {
+  color: var(--gold);
+}
+
+.board__empty {
+  display: block !important;
   color: var(--chalk-soft);
 }
 
-.recap__prompt {
-  color: var(--chalk-soft);
-  font-size: 0.875rem;
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin-top: 2rem;
 }
 
 /* ---------- Footnote ---------- */
